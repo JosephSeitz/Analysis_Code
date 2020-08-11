@@ -211,6 +211,7 @@ def fast_fourier_spectra(var_lst,binn = 100, T= 0.1, redist = True):
     yfft =  np.abs(yf[0:N//2])
     
     power = np.multiply(yfft, np.conj(yfft))
+    #power_fft = power.real / N**2
     if redist == False:
         return xf, power
     
