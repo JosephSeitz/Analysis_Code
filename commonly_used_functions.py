@@ -88,7 +88,7 @@ def file_to_df(path, fillnans = False):
     return df
 
 ##############################################################################
-def fire_start(df, n, sig = 5):
+def fire_period(df, n, sig = 5, end_i = False):
     """
     This function takes a burn dataframe and finds the index where the desired 
     temperature sigma value is reached 
@@ -121,8 +121,19 @@ def fire_start(df, n, sig = 5):
         if df["T"][i] > fire_sig:
             x_fire = i
             break
+    if end_i == False:
+        return x_fire
     
-    return x_fire
+    if end_i == True:
+        x_end_fire = 9e10 
+        t_inv = list(df["T"])[::-1]
+        for i in range(len(df["T"])):
+            if t_inv[i] > fire_sig:
+                x_end_fire = len(t_inv) - int(i)
+                break
+        return x_fire, x_end_fire
+    
+    
 
 ##############################################################################
 def lin_rb(freq, power, n_bins, new_n_bins):
