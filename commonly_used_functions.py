@@ -174,7 +174,7 @@ def lin_rb(freq, power, n_bins, new_n_bins):
     return new_freq, new_df, lin_rb_psd
 
 ##############################################################################
-def fast_fourier_spectra(var_lst,binn = 100, T= 0.1, redist = True):
+def fast_fourier_spectra(var_lst,binn = 100, T= 0.1, redist = True, welch =False,fs = 10):
     """
     This function creates a fast fourier spectrum of desired list
 
@@ -208,20 +208,27 @@ def fast_fourier_spectra(var_lst,binn = 100, T= 0.1, redist = True):
     """
     from scipy.fft import fft
     import numpy as np
-    
+    import scipy as sc
+   
     N = len(var_lst)
     if N < binn:
         return [np.nan],[np.nan]
     
     # Number of sample points
     N = len(var_lst)
-    
+  
+      
     # sample spacing
     yf = fft(np.array(var_lst))
-    xf = np.linspace(0.0, 1.0/(2.0*T), N//2)
-    yfft =  np.abs(yf[0:N//2])
     
-    power = np.multiply(yfft, np.conj(yfft))
+    #xf = fftpack.fftfreq(len(var_lst), d=T) 
+    xf = np.linspace(0.0, 1.0/(2.0*T), N//2) #ORIGINAL
+    yfft =  np.abs(yf[0:N//2])#ORIGINAL
+    
+    power = np.multiply(yfft, np.conj(yfft))/(N//2) #ORIGINAL
+    if welch ==True:
+         xf, power =  sc.signal.welch(var_lst, fs=fs,nperseg = N,nfft = N, scaling = "density")
+    
     #power_fft = power.real / N**2
     if redist == False:
         return xf, power
